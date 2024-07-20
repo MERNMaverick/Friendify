@@ -13,7 +13,8 @@ Friendify is a dynamic social media app designed to foster meaningful connection
 ## Installation
 To get started with Friendify, clone the repository and install the necessary dependencies:
 
-\``` bash
+\``` 
+bash
 Copy code
 git clone https://github.com/yourusername/Friendify.git
 cd Friendify
