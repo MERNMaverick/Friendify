@@ -11,18 +11,22 @@ Friendify is a dynamic social media app designed to foster meaningful connection
 - Privacy & Security: Control who can see your information and posts with advanced privacy settings.
 
 ## Installation
-To get started with Friendify, clone the repository and install the necessary dependencies:
 
-\``` 
-bash
-Copy code
-git clone https://github.com/yourusername/Friendify.git
-cd Friendify
-\```
+To get started with Friendify, follow these steps:
 
-# Follow the setup instructions in the README.md file
-Contribution
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/yourusername/Friendify.git
+    ```
+2. Navigate to the project directory:
+    ```bash
+    cd Friendify
+    ```
+
+## Follow the setup instructions in the README.md file
+
+## Contribution
 We welcome contributions to Friendify! Whether it's bug fixes, feature enhancements, or documentation improvements, your help is appreciated. Please fork the repository, create a new branch, and submit a pull request.
 
-# License
+## License
 Friendify is licensed under the MIT License. See the LICENSE file for more details.
