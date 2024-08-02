@@ -42,6 +42,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage})
 
+
+// Routes
+app.post('auth/register', upload.single("picture"), register)
+
 // Server configuration
 const PORT = process.env.PORT || 5000;
 
