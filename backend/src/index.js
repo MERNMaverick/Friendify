@@ -8,6 +8,8 @@ import morgan from 'morgan'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import multer from 'multer'
+import authRoutes from './routes/auth.js'
+import { register } from './controller/auth.js'
 
 // CONFIGURATION
 const __filename = fileURLToPath(import.meta.url);
@@ -29,7 +31,7 @@ app.use(morgan('common'))
 dotenv.config()
 
 
-// File Storage
+// FILE STORAGE
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/assets')
@@ -43,13 +45,15 @@ const storage = multer.diskStorage({
 const upload = multer({ storage})
 
 
-// Routes
+// ROUTES WITH UPLOAD MIDDLEWARE
 app.post('auth/register', upload.single("picture"), register)
 
-// Server configuration
+// ROUTES 
+app.use('/auth', authRoutes)
+// ENVIRONMENT VARIABLES
 const PORT = process.env.PORT || 5000;
 
-// Database connection configuration
+// DATABASE CONNECTION CONFIGURATION
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB')
