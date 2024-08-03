@@ -10,6 +10,8 @@ import { fileURLToPath } from 'url'
 import multer from 'multer'
 import authRoutes from './routes/auth.js'
 import { register } from './controller/auth.js'
+import userRoutes from './routes/user.js'
+import postRoutes from './routes/posts.js'
 
 // CONFIGURATION
 const __filename = fileURLToPath(import.meta.url);
@@ -50,7 +52,8 @@ app.post('auth/register', upload.single("picture"), register)
 
 // ROUTES 
 app.use('/auth', authRoutes)
-
+app.use('/user', userRoutes)
+app.use('/posts', postRoutes)
 // ENVIRONMENT VARIABLES
 const PORT = process.env.PORT || 5000;
 
