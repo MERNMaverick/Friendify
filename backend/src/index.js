@@ -50,6 +50,7 @@ app.post('auth/register', upload.single("picture"), register)
 
 // ROUTES 
 app.use('/auth', authRoutes)
+
 // ENVIRONMENT VARIABLES
 const PORT = process.env.PORT || 5000;
 
