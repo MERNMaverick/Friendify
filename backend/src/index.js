@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url'
 import multer from 'multer'
 import authRoutes from './routes/auth.js'
 import { register } from './controller/auth.js'
-import userRoutes from './routes/user.js'
+import userRoutes from './routes/users.js'
 import postRoutes from './routes/posts.js'
 import { verifyToken } from './middleware/auth.js'
 import { createPost } from './controller/posts.js'
@@ -24,11 +24,11 @@ const app = express()
 
 // MIDDLEWARE
 app.use(express.json());
-app.use("/assets", express.static(path.join(__dirname, 'public/assets')))
+app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
 app.use(cors());
-app.use(helmet())
-app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }))
-app.use(morgan('common'))
+app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
+app.use(morgan('common')); // Ensure Morgan is used
 
 
 // Load environment variables from .env file
@@ -50,15 +50,19 @@ const upload = multer({ storage})
 
 
 // ROUTES WITH UPLOAD MIDDLEWARE
-app.post('auth/register', upload.single("picture"), register)
-app.post('/posts', verifyToken, upload.single("picture"), createPost)
+app.post('/auth/register', upload.single("picture"), register);
+app.post('/posts', verifyToken, upload.single("picture"), createPost);
 
 // ROUTES 
 app.use('/auth', authRoutes)
 app.use('/user', userRoutes)
 app.use('/posts', postRoutes)
+app.get('/test', (req, res) => {
+  res.send('Test route is working');
+});
+
 // ENVIRONMENT VARIABLES
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5002;
 
 // DATABASE CONNECTION CONFIGURATION
 mongoose.connect(process.env.MONGODB_URI)
