@@ -21,11 +21,11 @@ const FriendListWidget = ({ userId }) => {
     );
     const data = await response.json();
     dispatch(setFriends({ friends: data }));
-  };
+  }
 
   useEffect(() => {
     getFriends();
-  }, []); 
+  }, [getFriends]); // Add getFriends here
 
   return (
     <WidgetWrapper>
