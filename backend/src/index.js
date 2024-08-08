@@ -62,13 +62,13 @@ app.get('/test', (req, res) => {
 });
 
 // ENVIRONMENT VARIABLES
-const PORT = process.env.PORT || 5002;
+const port = process.env.PORT || 4000;
 
 // DATABASE CONNECTION CONFIGURATION
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB')
-    app.listen(PORT, () => {
+    app.listen(port, () => {
       console.log(`Server is running on port ${PORT}`)
     })
   })
