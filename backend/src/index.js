@@ -22,10 +22,18 @@ const __dirname = path.dirname(__filename);
 // INITIALIZING EXPRESS APP
 const app = express()
 
+// CORS OPTIONS
+const corsOptions = {
+  origin: 'https://friendify-ixjb.onrender.com', // Frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true 
+};
+
 // MIDDLEWARE
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
-app.use(cors());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 app.use(morgan('common')); // Ensure Morgan is used
