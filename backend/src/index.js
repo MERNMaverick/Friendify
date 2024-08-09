@@ -33,7 +33,7 @@ const corsOptions = {
 // MIDDLEWARE
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
+app.use("/assets", express.static(path.join(__dirname, './public/assets')));
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 app.use(morgan('common')); // Ensure Morgan is used
@@ -43,16 +43,16 @@ app.use(morgan('common')); // Ensure Morgan is used
 dotenv.config()
 
 
+
 // FILE STORAGE
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/assets')
+    cb(null, path.join(__dirname, './public/assets')); 
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname)
+    cb(null, Date.now() + '-' + file.originalname);
   },
-}
-);
+});
 
 const upload = multer({ storage})
 
