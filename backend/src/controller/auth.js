@@ -6,19 +6,26 @@ import User from '../models/User.js';
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log('Login attempt:', email);
+        console.log('Login attempt with email:', email);
 
         // Find the user by email
         const user = await User.findOne({ email });
         if (!user) {
-            console.log('User not found');
+            console.log('User not found for email:', email);
             return res.status(404).json({ message: 'User not found' });
         }
 
+        console.log('User found:', user);
+
         // Check if the password is correct
+        if (!password || !user.password) {
+            console.log('Password or user password is undefined');
+            return res.status(400).json({ message: 'Invalid password' });
+        }
+
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            console.log('Invalid password');
+            console.log('Invalid password for user:', user.email);
             return res.status(400).json({ message: 'Invalid password' });
         }
 
@@ -35,6 +42,7 @@ export const login = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 
 // REGISTER USER
