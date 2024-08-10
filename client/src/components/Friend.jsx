@@ -23,7 +23,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
 
   const patchFriend = async () => {
     const response = await fetch(
-      `http://https://friendify-backend-api.onrender.com/users/${_id}/${friendId}`,
+      `https://friendify-backend-api.onrender.com/users/${_id}/${friendId}`,
       {
         method: "PATCH",
         headers: {
@@ -39,7 +39,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   return (
     <FlexBetween>
       <FlexBetween gap="1rem">
-        <UserImage image={userPicturePath} size="55px" />
+        <UserImage image={`https://friendify-backend-api.onrender.com/assets/${userPicturePath}`} size="55px" />
         <Box
           onClick={() => {
             navigate(`/profile/${friendId}`);
@@ -64,7 +64,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
           </Typography>
         </Box>
       </FlexBetween>
-      {friendId !== _id && ( // Conditionally render the friend icon button
+      {friendId !== _id && (
         <IconButton
           onClick={() => patchFriend()}
           sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
