@@ -22,7 +22,7 @@ const PostWidget = ({
   userPicturePath,
   likes,
   comments,
-  loggedInUserId, // Receive loggedInUserId
+  loggedInUserId,
 }) => {
   const [isComments, setIsComments] = useState(false);
   const dispatch = useDispatch();
@@ -54,8 +54,8 @@ const PostWidget = ({
         name={name}
         subtitle={location}
         userPicturePath={userPicturePath}
-        isFriend={postUserId !== loggedInUserId} // Conditionally show friend icon
-        disableFriendAction={postUserId === loggedInUserId} // Pass a flag to disable friend action
+        isFriend={postUserId !== loggedInUserId}
+        disableFriendAction={postUserId === loggedInUserId}
       />
       <Typography color={main} sx={{ mt: "1rem" }}>
         {description}

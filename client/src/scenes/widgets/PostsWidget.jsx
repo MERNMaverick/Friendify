@@ -7,7 +7,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts);
   const token = useSelector((state) => state.token);
-  const loggedInUserId = useSelector((state) => state.user._id); // Get logged in user ID
+  const loggedInUserId = useSelector((state) => state.user._id);
 
   const getPosts = async () => {
     const response = await fetch(
@@ -39,7 +39,6 @@ const PostsWidget = ({ userId, isProfile = false }) => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Sort posts by createdAt in descending order
   const sortedPosts = [...posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
@@ -68,7 +67,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
             userPicturePath={userPicturePath}
             likes={likes}
             comments={comments}
-            loggedInUserId={loggedInUserId} // Pass loggedInUserId
+            loggedInUserId={loggedInUserId}
           />
         )
       )}
