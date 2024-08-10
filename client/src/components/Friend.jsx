@@ -42,7 +42,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
         <UserImage image={`https://friendify-backend-api.onrender.com/assets/${userPicturePath}`} size="55px" />
         <Box
           onClick={() => {
-            navigate(`/profile/${friendId}`);
+            navigate(`/users/${friendId}`);
             navigate(0);
           }}
         >
