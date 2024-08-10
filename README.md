@@ -24,10 +24,12 @@ Copy code
 git clone https://github.com/yourusername/Friendify.git
 Navigate to the project directory:
 ```
+
 ```bash
 Copy code
 cd Friendify
-Follow the setup instructions in the README.md file to configure both frontend and backend environments.```
+Follow the setup instructions in the README.md file to configure both frontend and backend environments.
+```
 
 ## Contribution
 We welcome contributions to Friendify! Whether it's bug fixes, feature enhancements, or documentation improvements, your help is appreciated. Please fork the repository, create a new branch, and submit a pull request.
