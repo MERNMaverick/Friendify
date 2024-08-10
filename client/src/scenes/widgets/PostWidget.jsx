@@ -53,7 +53,7 @@ const PostWidget = ({
         friendId={postUserId}
         name={name}
         subtitle={location}
-        userPicturePath={`https://friendify-backend-api.onrender.com/assets/${userPicturePath}`}
+        userPicturePath={userPicturePath}  // Pass just the path, not a full URL
         isFriend={postUserId !== loggedInUserId}
         disableFriendAction={postUserId === loggedInUserId}
       />
@@ -66,7 +66,7 @@ const PostWidget = ({
           height="auto"
           alt="post"
           style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={`https://friendify-backend-api.onrender.com/assets/${picturePath}`}
+          src={`https://friendify-backend-api.onrender.com/assets/${picturePath}`}  // Use the full URL
         />
       )}
       <FlexBetween mt="0.25rem">
