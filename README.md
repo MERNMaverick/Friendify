@@ -20,13 +20,11 @@ To get started with Friendify, follow these steps:
 ## Clone the repository:
 
 ```bash
-Copy code
 git clone https://github.com/yourusername/Friendify.git
 Navigate to the project directory:
 ```
 
 ```bash
-Copy code
 cd Friendify
 Follow the setup instructions in the README.md file to configure both frontend and backend environments.
 ```
