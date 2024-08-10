@@ -8,7 +8,7 @@ Friendify is a dynamic social media app designed to foster meaningful connection
 4. Material UI: Enjoy a modern and responsive design with Material UI components.
 
    
-##Technology Stack
+## Technology Stack
 
 Frontend: Built with React and Redux Toolkit for state management.
 
