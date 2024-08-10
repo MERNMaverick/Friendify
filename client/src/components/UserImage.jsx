@@ -8,7 +8,7 @@ const UserImage = ({ image, size = "60px" }) => {
         width={size}
         height={size}
         alt="user"
-        src={`http://https://friendify-backend-api.onrender.com/assets/${image}`}
+        src={`https://friendify-backend-api.onrender.com/assets/${image}`}
       />
     </Box>
   );
