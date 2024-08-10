@@ -14,9 +14,6 @@ import postRoutes from "./routes/post.js";
 import { register } from "./controllers/auth.js";
 import { createPost } from "./controllers/post.js";
 import { verifyToken } from "./middleware/auth.js";
-import User from "./models/User.js";
-import Post from "./models/Post.js";
-import { users, posts } from "./data/index.js";
 
 // CONFIGURATION
 const __filename = fileURLToPath(import.meta.url);
@@ -31,16 +28,18 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
-// FILE STORAGE
+// File Storage Configuration
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/assets");
+  destination: (req, file, cb) => {
+    cb(null, "public/assets")
   },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
+  filename: (req, file, cb) => {
+    cb(null, file.originalname); // Save file with original name
   },
 });
+
 const upload = multer({ storage });
+
 
 // ROUTES WITH FILES
 app.post("/auth/register", upload.single("picture"), register);
@@ -51,21 +50,17 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 
-// MONGOOSE SETUP
-const port = process.env.PORT || 6001;
-try {
-  await mongoose.connect(process.env.MONGO_URL);
-  console.log("DB Connected successfully");
-} catch (error) {
-  console.log(`${error} did not connect!`);
-}
+// ENVIRONMENT VARIABLES
+const port = process.env.PORT || 4000;
 
-// SERVER START
-Promise.resolve(
-  app.listen(port, () => console.log(`Server started on port ${port}`))
-)
-  //   .then(() => User.insertMany(users))
-  //   .then(() => Post.insertMany(posts))
+// DATABASE CONNECTION CONFIGURATION
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log('Connected to MongoDB');
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  })
   .catch((error) => {
-    console.error("An error occurred: ", error);
+    console.log(`Connection failed: ${error.message}`);
   });

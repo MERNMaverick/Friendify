@@ -4,22 +4,29 @@ import User from "../models/User.js";
 /* CREATE */
 export const createPost = async (req, res) => {
   try {
-    const { userId, description, picturePath } = req.body;
+    const { userId, description } = req.body;
+    const picturePath = req.file ? req.file.filename : null; // Handle optional file
+    
     const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
     const newPost = new Post({
       userId,
       firstName: user.firstName,
       lastName: user.lastName,
       location: user.location,
-      desription,
+      description, 
       userPicturePath: user.picturePath,
-      picturePath,
+      picturePath, // This can be null if no picture is uploaded
       likes: {},
       comments: [],
     });
+
     await newPost.save();
-    const post = await Post.find();
-    res.status(201).json(post);
+    const posts = await Post.find();
+    res.status(201).json(posts);
   } catch (err) {
     res.status(409).json({ message: err.message });
   }
