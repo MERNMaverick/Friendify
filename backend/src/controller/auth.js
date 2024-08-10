@@ -2,14 +2,14 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
-// LOGGING IN
+// LOGIN 
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         console.log('Login attempt with email:', email);
 
-        // Find the user by email
-        const user = await User.findOne({ email });
+        // Find the user by email and explicitly include the password field
+        const user = await User.findOne({ email }).select('+password');
         if (!user) {
             console.log('User not found for email:', email);
             return res.status(404).json({ message: 'User not found' });
@@ -42,6 +42,7 @@ export const login = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 
 
