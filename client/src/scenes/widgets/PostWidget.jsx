@@ -53,7 +53,7 @@ const PostWidget = ({
         friendId={postUserId}
         name={name}
         subtitle={location}
-        userPicturePath={userPicturePath}
+        userPicturePath={`https://friendify-backend-api.onrender.com/assets/${userPicturePath}`}
         isFriend={postUserId !== loggedInUserId}
         disableFriendAction={postUserId === loggedInUserId}
       />
