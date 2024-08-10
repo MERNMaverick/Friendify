@@ -47,20 +47,13 @@ const PostWidget = ({
     dispatch(setPost({ post: updatedPost }));
   };
 
-  const getImageUrl = (path) => {
-    if (path.startsWith('http')) {
-      return path; // Already a full URL
-    }
-    return `https://friendify-backend-api.onrender.com/assets/${path}`;
-  };
-
   return (
     <WidgetWrapper m="2rem 0">
       <Friend
         friendId={postUserId}
         name={name}
         subtitle={location}
-        userPicturePath={getImageUrl(userPicturePath)}
+        userPicturePath={`https://friendify-backend-api.onrender.com/assets/${userPicturePath}`}
         isFriend={postUserId !== loggedInUserId}
         disableFriendAction={postUserId === loggedInUserId}
       />
@@ -73,7 +66,7 @@ const PostWidget = ({
           height="auto"
           alt="post"
           style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={getImageUrl(picturePath)}
+          src={`https://friendify-backend-api.onrender.com/assets/${picturePath}`}
         />
       )}
       <FlexBetween mt="0.25rem">
