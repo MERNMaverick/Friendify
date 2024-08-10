@@ -36,10 +36,14 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
     dispatch(setFriends({ friends: data }));
   };
 
+  const getImageUrl = (path) => {
+    return path.startsWith('http') ? path : `https://friendify-backend-api.onrender.com/assets/${path}`;
+  };
+
   return (
     <FlexBetween>
       <FlexBetween gap="1rem">
-        <UserImage image={`https://friendify-backend-api.onrender.com/assets/${userPicturePath}`} size="55px" />
+        <UserImage image={getImageUrl(userPicturePath)} size="55px" />
         <Box
           onClick={() => {
             navigate(`/profile/${friendId}`);
