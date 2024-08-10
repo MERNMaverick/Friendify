@@ -16,11 +16,11 @@ import { createPost } from "./controllers/post.js";
 import { verifyToken } from "./middleware/auth.js";
 
 // Configure CORS
-const corsOptions = {
-  origin: 'https://friendify-ixjb.onrender.com',
-  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-  credentials: true,
-};
+// const corsOptions = {
+//   origin: 'https://friendify-ixjb.onrender.com',
+//   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+//   credentials: true,
+// };
 
 // CONFIGURATION
 const __filename = fileURLToPath(import.meta.url);
@@ -32,7 +32,8 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
 // File Storage Configuration

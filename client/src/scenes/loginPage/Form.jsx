@@ -79,7 +79,8 @@ const Form = () => {
   };
 
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch("https://friendify-backend-api.onrender.com/auth/login", {
+    const loggedInResponse = await fetch(
+      "https://friendify-backend-api.onrender.com/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),

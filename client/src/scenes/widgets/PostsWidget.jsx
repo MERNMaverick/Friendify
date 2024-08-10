@@ -10,7 +10,8 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   const loggedInUserId = useSelector((state) => state.user._id); // Get logged in user ID
 
   const getPosts = async () => {
-    const response = await fetch("http://https://friendify-backend-api.onrender.com/posts", {
+    const response = await fetch(
+      "https://friendify-backend-api.onrender.com/posts", {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -20,7 +21,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
 
   const getUserPosts = async () => {
     const response = await fetch(
-      `http://https://friendify-backend-api.onrender.com/posts/${userId}/posts`,
+      `https://friendify-backend-api.onrender.com/posts/${userId}/posts`,
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
