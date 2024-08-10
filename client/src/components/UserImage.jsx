@@ -1,14 +1,9 @@
 import { Box } from "@mui/material";
 
 const UserImage = ({ image, size = "60px" }) => {
-  // Function to handle both absolute and relative URLs
+  // Check if path starts with 'http' or 'https', return it as is
   const getImageUrl = (path) => {
-    // Check if path starts with 'http', if so, return it as is
-    if (path.startsWith('http')) {
-      return path;
-    }
-    // Otherwise, construct a URL with the base path
-    return `https://friendify-backend-api.onrender.com/assets/${path}`;
+    return path.startsWith('http') ? path : `https://friendify-backend-api.onrender.com/assets/${path}`;
   };
 
   return (
@@ -18,7 +13,7 @@ const UserImage = ({ image, size = "60px" }) => {
         width={size}
         height={size}
         alt="user"
-        src={getImageUrl(image)}  // Use the getImageUrl function to handle paths
+        src={getImageUrl(image)}
       />
     </Box>
   );
