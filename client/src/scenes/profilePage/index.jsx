@@ -14,24 +14,24 @@ const ProfilePage = () => {
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 
-  const getUser = async () => {
-    try {
-      const response = await fetch(`https://friendify-backend-api.onrender.com/users/${userId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
-      const data = await response.json();
-      setUser(data);
-    } catch (error) {
-      console.error("Failed to fetch user data:", error);
+const getUser = async () => {
+  try {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/${userId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} ${response.statusText}`);
     }
-  };
+    const data = await response.json();
+    setUser(data);
+  } catch (error) {
+    console.error("Failed to fetch user data:", error);
+  }
+};
 
   useEffect(() => {
     getUser();
