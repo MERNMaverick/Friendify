@@ -15,20 +15,29 @@ const ProfilePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 
   const getUser = async () => {
-    const response = await fetch(
-      `https://friendify-backend-api.onrender.com/users/${userId}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await response.json();
-    setUser(data);
+    try {
+      const response = await fetch(`https://friendify-backend-api.onrender.com/users/${userId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+      const data = await response.json();
+      setUser(data);
+    } catch (error) {
+      console.error("Failed to fetch user data:", error);
+    }
   };
 
   useEffect(() => {
     getUser();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [userId]); // Ensure the effect runs when userId changes
 
-  if (!user) return null;
+  if (!user) return <div>Loading...</div>; // Display a loading state while fetching
 
   return (
     <Box>
