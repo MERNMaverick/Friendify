@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   ChatBubbleOutlineOutlined,
   FavoriteBorderOutlined,
@@ -8,9 +9,8 @@ import { Box, Divider, IconButton, Typography, useTheme, TextField, Button } fro
 import FlexBetween from "../../components/FlexBetween";
 import Friend from "../../components/Friend";
 import WidgetWrapper from "../../components/WidgetWrapper";
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPost, addComment } from "../../state";
+import { setPost } from "../../state";
 
 const PostWidget = ({
   postId,
@@ -30,6 +30,7 @@ const PostWidget = ({
   const token = useSelector((state) => state.token);
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
+
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
@@ -62,8 +63,9 @@ const PostWidget = ({
     if (response.ok) {
       const updatedPost = await response.json();
       dispatch(setPost({ post: updatedPost }));
-      dispatch(addComment({ postId, comment: newComment }));
       setNewComment("");
+    } else {
+      console.error("Failed to add comment:", await response.text());
     }
   };
 
@@ -101,6 +103,7 @@ const PostWidget = ({
             </IconButton>
             <Typography>{likeCount}</Typography>
           </FlexBetween>
+
           <FlexBetween gap="0.3rem">
             <IconButton onClick={() => setIsComments(!isComments)}>
               <ChatBubbleOutlineOutlined />
@@ -108,6 +111,7 @@ const PostWidget = ({
             <Typography>{comments.length}</Typography>
           </FlexBetween>
         </FlexBetween>
+
         <IconButton>
           <ShareOutlined />
         </IconButton>
@@ -115,10 +119,10 @@ const PostWidget = ({
       {isComments && (
         <Box mt="0.5rem">
           {comments.map((comment, i) => (
-            <Box key={`${name}-${i}`}>
+            <Box key={`${comment._id || i}`}>
               <Divider />
               <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                {comment}
+                <strong>{comment.firstName} {comment.lastName}:</strong> {comment.comment}
               </Typography>
             </Box>
           ))}
