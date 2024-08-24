@@ -8,6 +8,8 @@ import MyPostWidget from "../widgets/MyPostWidget";
 import PostsWidget from "../widgets/PostsWidget";
 import UserWidget from "../widgets/UserWidget";
 
+const BACKEND_URL = "https://friendify-backend-api.onrender.com"; // Ensure this is correct
+
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,9 +24,9 @@ const ProfilePage = () => {
       setLoading(true);
       console.log(`Fetching user data for ID: ${userId}`);
       console.log(`Using token: ${token.substring(0, 10)}...`);
-      console.log(`Full URL: ${process.env.REACT_APP_BACKEND_URL}/users/${userId}`);
+      console.log(`Full URL: ${BACKEND_URL}/users/${userId}`);
 
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/${userId}`, {
+      const response = await fetch(`${BACKEND_URL}/users/${userId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -38,9 +40,6 @@ const ProfilePage = () => {
       if (!response.ok) {
         const errorBody = await response.text();
         console.log(`Error body: ${errorBody}`);
-        if (response.status === 404) {
-          throw new Error("User not found");
-        }
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
 
