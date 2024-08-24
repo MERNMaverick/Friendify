@@ -4,13 +4,13 @@ import {
   FavoriteOutlined,
   ShareOutlined,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, Divider, IconButton, Typography, useTheme, TextField, Button } from "@mui/material";
 import FlexBetween from "../../components/FlexBetween";
 import Friend from "../../components/Friend";
 import WidgetWrapper from "../../components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPost } from "../../state";
+import { setPost, addComment } from "../../state";
 
 const PostWidget = ({
   postId,
@@ -25,11 +25,11 @@ const PostWidget = ({
   loggedInUserId,
 }) => {
   const [isComments, setIsComments] = useState(false);
+  const [newComment, setNewComment] = useState("");
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
-
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
@@ -47,13 +47,33 @@ const PostWidget = ({
     dispatch(setPost({ post: updatedPost }));
   };
 
+  const handleAddComment = async () => {
+    if (newComment.trim() === "") return;
+
+    const response = await fetch(`https://friendify-backend-api.onrender.com/posts/${postId}/comment`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId: loggedInUserId, comment: newComment }),
+    });
+
+    if (response.ok) {
+      const updatedPost = await response.json();
+      dispatch(setPost({ post: updatedPost }));
+      dispatch(addComment({ postId, comment: newComment }));
+      setNewComment("");
+    }
+  };
+
   return (
     <WidgetWrapper m="2rem 0">
       <Friend
         friendId={postUserId}
         name={name}
         subtitle={location}
-        userPicturePath={userPicturePath}  // Pass just the path, not a full URL
+        userPicturePath={userPicturePath}
         isFriend={postUserId !== loggedInUserId}
         disableFriendAction={postUserId === loggedInUserId}
       />
@@ -66,7 +86,7 @@ const PostWidget = ({
           height="auto"
           alt="post"
           style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={`https://friendify-backend-api.onrender.com/assets/${picturePath}`}  // Use the full URL
+          src={`https://friendify-backend-api.onrender.com/assets/${picturePath}`}
         />
       )}
       <FlexBetween mt="0.25rem">
@@ -81,7 +101,6 @@ const PostWidget = ({
             </IconButton>
             <Typography>{likeCount}</Typography>
           </FlexBetween>
-
           <FlexBetween gap="0.3rem">
             <IconButton onClick={() => setIsComments(!isComments)}>
               <ChatBubbleOutlineOutlined />
@@ -89,7 +108,6 @@ const PostWidget = ({
             <Typography>{comments.length}</Typography>
           </FlexBetween>
         </FlexBetween>
-
         <IconButton>
           <ShareOutlined />
         </IconButton>
@@ -105,6 +123,19 @@ const PostWidget = ({
             </Box>
           ))}
           <Divider />
+          <FlexBetween>
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="Add a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              sx={{ mr: 1 }}
+            />
+            <Button variant="contained" onClick={handleAddComment}>
+              Post
+            </Button>
+          </FlexBetween>
         </Box>
       )}
     </WidgetWrapper>
