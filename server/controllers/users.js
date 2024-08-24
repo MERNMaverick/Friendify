@@ -27,7 +27,7 @@ export const getUser = async (req, res) => {
     res.status(200).json(user);
   } catch (err) {
     console.error("Error in getUser:", err);
-    res.status(500).json({ message: "Server error", error: err.message });
+    res.status(500).json({ message: "Server error", error: err.message, stack: err.stack });
   }
 };
 
