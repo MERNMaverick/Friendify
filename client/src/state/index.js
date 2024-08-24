@@ -36,9 +36,16 @@ export const authSlice = createSlice({
       const updatedPosts = state.posts.map((post) => {
         if (post._id === action.payload.post._id) return action.payload.post;
         return post;
-      });
+      },);
       state.posts = updatedPosts;
     },
+        addComment: (state, action) => {
+      const { postId, comment } = action.payload;
+      const post = state.posts.find((post) => post._id === postId);
+      if (post) {
+        post.comments.push(comment);
+      }
+    },    
   },
 });
 
