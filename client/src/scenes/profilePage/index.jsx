@@ -1,5 +1,5 @@
-import { Box, useMediaQuery } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, useMediaQuery, Typography } from "@mui/material";
+import { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../navbar";
@@ -7,8 +7,7 @@ import FriendListWidget from "../widgets/FriendListWidget";
 import MyPostWidget from "../widgets/MyPostWidget";
 import PostsWidget from "../widgets/PostsWidget";
 import UserWidget from "../widgets/UserWidget";
-
-const BACKEND_URL = "https://friendify-backend-api.onrender.com"; // Ensure this is correct
+import { BACKEND_URL } from "../config";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -19,7 +18,7 @@ const ProfilePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const navigate = useNavigate();
 
-  const getUser = async () => {
+  const getUser = useCallback(async () => {
     try {
       setLoading(true);
       console.log(`Fetching user data for ID: ${userId}`);
@@ -52,22 +51,30 @@ const ProfilePage = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    getUser();
   }, [userId, token]);
 
-  if (loading) return <div>Loading...</div>;
+  useEffect(() => {
+    console.log("ProfilePage useEffect triggered");
+    getUser();
+
+    // Cleanup function
+    return () => {
+      console.log("ProfilePage useEffect cleanup");
+    };
+  }, [getUser]);
+
+  console.log("ProfilePage render", { loading, error, user });
+
+  if (loading) return <Typography>Loading...</Typography>;
   if (error) {
     return (
-      <div>
-        <p>Error: {error}</p>
+      <Box>
+        <Typography color="error">Error: {error}</Typography>
         <button onClick={() => navigate('/')}>Go back to home</button>
-      </div>
+      </Box>
     );
   }
-  if (!user) return null;
+  if (!user) return <Typography>No user data available</Typography>;
 
   return (
     <Box>
