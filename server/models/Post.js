@@ -1,5 +1,24 @@
 import { Schema, model } from "mongoose";
 
+const commentSchema = new Schema({
+  userId: {
+    type: String,
+    required: true,
+  },
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
+  comment: {
+    type: String,
+    required: true,
+  },
+}, { timestamps: true });
+
 const postSchema = new Schema(
   {
     userId: {
@@ -22,14 +41,10 @@ const postSchema = new Schema(
       type: Map,
       of: Boolean,
     },
-    comments: {
-      type: Array,
-      default: [],
-    },
+    comments: [commentSchema], // Updated to use the commentSchema
   },
   { timestamps: true }
 );
 
 const Post = model("Post", postSchema);
-
 export default Post;
