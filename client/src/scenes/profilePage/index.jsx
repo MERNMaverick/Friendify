@@ -20,6 +20,10 @@ const ProfilePage = () => {
   const getUser = async () => {
     try {
       setLoading(true);
+      console.log(`Fetching user data for ID: ${userId}`);
+      console.log(`Using token: ${token.substring(0, 10)}...`);
+      console.log(`Full URL: ${process.env.REACT_APP_BACKEND_URL}/users/${userId}`);
+
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/${userId}`, {
         method: "GET",
         headers: {
@@ -28,7 +32,12 @@ const ProfilePage = () => {
         },
       });
 
+      console.log(`Response status: ${response.status}`);
+      console.log(`Response OK: ${response.ok}`);
+
       if (!response.ok) {
+        const errorBody = await response.text();
+        console.log(`Error body: ${errorBody}`);
         if (response.status === 404) {
           throw new Error("User not found");
         }
@@ -36,6 +45,7 @@ const ProfilePage = () => {
       }
 
       const data = await response.json();
+      console.log("Fetched user data:", data);
       setUser(data);
     } catch (error) {
       console.error("Failed to fetch user data:", error);
