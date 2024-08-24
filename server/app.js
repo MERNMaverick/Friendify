@@ -18,6 +18,7 @@ import { verifyToken } from "./middleware/auth.js";
 // Configure CORS
 const corsOptions = {
   origin: 'https://friendify-ixjb.onrender.com',
+  optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   credentials: true,
 };
