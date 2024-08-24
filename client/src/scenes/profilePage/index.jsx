@@ -7,7 +7,7 @@ import FriendListWidget from "../widgets/FriendListWidget";
 import MyPostWidget from "../widgets/MyPostWidget";
 import PostsWidget from "../widgets/PostsWidget";
 import UserWidget from "../widgets/UserWidget";
-import { BACKEND_URL } from "../config";
+import { BACKEND_URL } from "../../config";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
