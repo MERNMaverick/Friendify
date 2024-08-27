@@ -1,17 +1,16 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "../../state";
-import PostWidget from "../widgets/PostWidget";
+import PostWidget from "./PostWidget";
+import { BACKEND_URL } from "../../config";
 
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts);
   const token = useSelector((state) => state.token);
-  const loggedInUserId = useSelector((state) => state.user._id);
 
   const getPosts = async () => {
-    const response = await fetch(
-      "https://friendify-backend-api.onrender.com/posts", {
+    const response = await fetch(`${BACKEND_URL}/posts`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -21,7 +20,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
 
   const getUserPosts = async () => {
     const response = await fetch(
-      `https://friendify-backend-api.onrender.com/posts/${userId}/posts`,
+      `${BACKEND_URL}/posts/${userId}/posts`,
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
@@ -37,13 +36,11 @@ const PostsWidget = ({ userId, isProfile = false }) => {
     } else {
       getPosts();
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const sortedPosts = [...posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }, [userId, isProfile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
-      {sortedPosts.map(
+      {posts.map(
         ({
           _id,
           userId,
@@ -67,7 +64,6 @@ const PostsWidget = ({ userId, isProfile = false }) => {
             userPicturePath={userPicturePath}
             likes={likes}
             comments={comments}
-            loggedInUserId={loggedInUserId}
           />
         )
       )}
