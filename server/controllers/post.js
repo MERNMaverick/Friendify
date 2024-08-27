@@ -92,30 +92,19 @@ export const getFeedPosts = async (req, res) => {
 };
 
 export const getUserPosts = async (req, res) => {
-  const startTime = Date.now();
   try {
     const { userId } = req.params;
-    console.log(`[${startTime}] Fetching posts for userId: ${userId}`);
+    console.log(`Fetching posts for userId: ${userId}`);
     
     // Convert userId string to ObjectId
     const userObjectId = new mongoose.Types.ObjectId(userId);
     
     const posts = await Post.find({ userId: userObjectId });
-    console.log(`[${Date.now()}] Found ${posts.length} posts for userId: ${userId}`);
-    
-    if (posts.length === 0) {
-      console.log(`[${Date.now()}] No posts found for userId: ${userId}`);
-    }
-
-    const endTime = Date.now();
-    console.log(`[${endTime}] Request completed in ${endTime - startTime}ms`);
-    
+    console.log(`Found ${posts.length} posts for userId: ${userId}`);
     res.status(200).json(posts);
   } catch (err) {
-    const endTime = Date.now();
-    console.error(`[${endTime}] Error fetching posts for userId: ${req.params.userId}`, err);
-    console.log(`Request failed after ${endTime - startTime}ms`);
-    res.status(500).json({ message: err.message });
+    console.error(`Error fetching posts for userId: ${req.params.userId}`, err);
+    res.status(404).json({ message: err.message });
   }
 };
 
