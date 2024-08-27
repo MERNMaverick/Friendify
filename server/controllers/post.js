@@ -107,3 +107,60 @@ export const likePost = async (req, res) => {
     res.status(404).json({ message: err.message });
   }
 };
+
+/* DELETE AND EDIT COMMENT */ 
+export const editComment = async (req, res) => {
+  try {
+    const { id, commentId } = req.params;
+    const { userId, comment } = req.body;
+
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const commentToEdit = post.comments.id(commentId);
+    if (!commentToEdit) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    if (commentToEdit.userId.toString() !== userId) {
+      return res.status(403).json({ message: "User not authorized to edit this comment" });
+    }
+
+    commentToEdit.comment = comment;
+    await post.save();
+
+    res.status(200).json(post);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+export const deleteComment = async (req, res) => {
+  try {
+    const { id, commentId } = req.params;
+    const { userId } = req.body;
+
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const commentToDelete = post.comments.id(commentId);
+    if (!commentToDelete) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    if (commentToDelete.userId.toString() !== userId && post.userId.toString() !== userId) {
+      return res.status(403).json({ message: "User not authorized to delete this comment" });
+    }
+
+    post.comments.pull(commentId);
+    await post.save();
+
+    res.status(200).json(post);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
