@@ -95,7 +95,11 @@ export const getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
     console.log(`Fetching posts for userId: ${userId}`);
-    const posts = await Post.find({ userId });
+    
+    // Convert userId string to ObjectId
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+    
+    const posts = await Post.find({ userId: userObjectId });
     console.log(`Found ${posts.length} posts for userId: ${userId}`);
     res.status(200).json(posts);
   } catch (err) {
