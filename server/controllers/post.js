@@ -94,9 +94,12 @@ export const getFeedPosts = async (req, res) => {
 export const getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
-    const post = await Post.find({ userId });
-    res.status(200).json(post);
+    console.log(`Fetching posts for userId: ${userId}`);
+    const posts = await Post.find({ userId });
+    console.log(`Found ${posts.length} posts for userId: ${userId}`);
+    res.status(200).json(posts);
   } catch (err) {
+    console.error(`Error fetching posts for userId: ${req.params.userId}`, err);
     res.status(404).json({ message: err.message });
   }
 };
