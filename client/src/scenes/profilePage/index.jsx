@@ -52,13 +52,32 @@ const ProfilePage = () => {
     }
   }, [userId, token]);
 
+  const getUserPosts = useCallback(async () => {
+    try {
+      console.log(`Fetching posts for user ${userId}`);
+      const response = await fetch(`${BACKEND_URL}/posts/${userId}/posts`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+      const data = await response.json();
+      console.log(`Fetched posts for user ${userId}:`, data);
+      dispatch(setPosts({ posts: data }));
+    } catch (error) {
+      console.error(`Failed to fetch posts for user ${userId}:`, error);
+    }
+  }, [userId, token, dispatch]);
+
   useEffect(() => {
     console.log("ProfilePage useEffect triggered");
     getUser();
+    getUserPosts();
     return () => {
       console.log("ProfilePage useEffect cleanup");
     };
-  }, [getUser]);
+  }, [getUser, getUserPosts]);
 
   useEffect(() => {
     console.log("Current posts in Redux store:", posts);
