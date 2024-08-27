@@ -94,16 +94,9 @@ export const getFeedPosts = async (req, res) => {
 export const getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
-    console.log(`Fetching posts for userId: ${userId}`);
-    
-    // Convert userId string to ObjectId
-    const userObjectId = new mongoose.Types.ObjectId(userId);
-    
-    const posts = await Post.find({ userId: userObjectId });
-    console.log(`Found ${posts.length} posts for userId: ${userId}`);
-    res.status(200).json(posts);
+    const post = await Post.find({ userId });
+    res.status(200).json(post);
   } catch (err) {
-    console.error(`Error fetching posts for userId: ${req.params.userId}`, err);
     res.status(404).json({ message: err.message });
   }
 };

@@ -12,6 +12,28 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const getPosts = async () => {
+    try {
+      setLoading(true);
+      console.log("Fetching all posts");
+      const response = await fetch(`${BACKEND_URL}/posts`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+      const data = await response.json();
+      console.log("Fetched all posts:", data);
+      dispatch(setPosts({ posts: data }));
+    } catch (error) {
+      console.error("Failed to fetch posts:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getUserPosts = async () => {
     try {
       setLoading(true);
@@ -38,13 +60,15 @@ const PostsWidget = ({ userId, isProfile = false }) => {
     console.log("PostsWidget useEffect triggered", { isProfile, userId });
     if (isProfile) {
       getUserPosts();
+    } else {
+      getPosts();
     }
   }, [userId, isProfile]);
 
   console.log("PostsWidget render", { loading, error, postsCount: posts.length });
 
   if (loading) return <CircularProgress />;
-  if (error) return <Typography color="error">Error loading posts: {error}</Typography>;
+  if (error) return <Typography color="error">Error: {error}</Typography>;
   if (posts.length === 0) return <Typography>No posts to display.</Typography>;
 
   return (
