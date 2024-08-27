@@ -15,30 +15,20 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   const getUserPosts = async () => {
     try {
       setLoading(true);
-      setError(null);
       console.log(`Fetching posts for user ${userId}`);
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
       const response = await fetch(`${BACKEND_URL}/posts/${userId}/posts`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
-        signal: controller.signal
       });
-
-      clearTimeout(timeoutId);
-
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
-
       const data = await response.json();
       console.log(`Fetched posts for user ${userId}:`, data);
       dispatch(setPosts({ posts: data }));
     } catch (error) {
       console.error(`Failed to fetch posts for user ${userId}:`, error);
-      setError(error.name === 'AbortError' ? 'Request timed out' : error.message);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
