@@ -23,6 +23,9 @@
     "web-vitals": "^2.1.4",
     "yup": "^0.32.11"
   },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -46,5 +49,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "resolutions": {
+    "react-scripts/@svgr/webpack": "^6.5.1"
   }
 }
