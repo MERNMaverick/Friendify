@@ -1,9 +1,10 @@
-import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
-const commentSchema = new Schema({
+const commentSchema = new mongoose.Schema({
   userId: {
-    type: String,
-    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
   firstName: {
     type: String,
@@ -19,10 +20,11 @@ const commentSchema = new Schema({
   },
 }, { timestamps: true });
 
-const postSchema = new Schema(
+const postSchema = new mongoose.Schema(
   {
     userId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
       required: true,
     },
     firstName: {
@@ -41,10 +43,10 @@ const postSchema = new Schema(
       type: Map,
       of: Boolean,
     },
-    comments: [commentSchema], // Updated to use the commentSchema
+    comments: [commentSchema],
   },
   { timestamps: true }
 );
 
-const Post = model("Post", postSchema);
+const Post = mongoose.model("Post", postSchema);
 export default Post;

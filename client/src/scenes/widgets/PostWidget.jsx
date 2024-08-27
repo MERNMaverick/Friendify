@@ -4,28 +4,36 @@ import {
   FavoriteBorderOutlined,
   FavoriteOutlined,
   ShareOutlined,
+  Edit,
+  Delete,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, Typography, useTheme, TextField, Button } from "@mui/material";
+import { 
+  Box, 
+  Divider, 
+  IconButton, 
+  Typography, 
+  useTheme, 
+  TextField, 
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import FlexBetween from "../../components/FlexBetween";
 import Friend from "../../components/Friend";
 import WidgetWrapper from "../../components/WidgetWrapper";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "../../state";
 
-const PostWidget = ({
-  postId,
-  postUserId,
-  name,
-  description,
-  location,
-  picturePath,
-  userPicturePath,
-  likes,
-  comments,
-  loggedInUserId,
-}) => {
+const PostWidget = ({ postId, postUserId, name, description, location, picturePath, userPicturePath, likes, comments, loggedInUserId }) => {
   const [isComments, setIsComments] = useState(false);
   const [newComment, setNewComment] = useState("");
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editedCommentText, setEditedCommentText] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const isLiked = Boolean(likes[loggedInUserId]);
@@ -66,6 +74,48 @@ const PostWidget = ({
       setNewComment("");
     } else {
       console.error("Failed to add comment:", await response.text());
+    }
+  };
+
+  const handleEditComment = async (commentId) => {
+    const response = await fetch(`https://friendify-backend-api.onrender.com/posts/${postId}/comment/${commentId}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId: loggedInUserId, comment: editedCommentText }),
+    });
+
+    if (response.ok) {
+      const updatedPost = await response.json();
+      dispatch(setPost({ post: updatedPost }));
+      setEditingCommentId(null);
+      setEditedCommentText("");
+    } else {
+      console.error("Failed to edit comment:", await response.text());
+    }
+  };
+
+  const handleDeleteComment = async () => {
+    if (!commentToDelete) return;
+
+    const response = await fetch(`https://friendify-backend-api.onrender.com/posts/${postId}/comment/${commentToDelete._id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId: loggedInUserId }),
+    });
+
+    if (response.ok) {
+      const updatedPost = await response.json();
+      dispatch(setPost({ post: updatedPost }));
+      setDeleteDialogOpen(false);
+      setCommentToDelete(null);
+    } else {
+      console.error("Failed to delete comment:", await response.text());
     }
   };
 
@@ -118,12 +168,45 @@ const PostWidget = ({
       </FlexBetween>
       {isComments && (
         <Box mt="0.5rem">
-          {comments.map((comment, i) => (
-            <Box key={`${comment._id || i}`}>
+          {comments.map((comment) => (
+            <Box key={comment._id}>
               <Divider />
-              <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                <strong>{comment.firstName} {comment.lastName}:</strong> {comment.comment}
-              </Typography>
+              {editingCommentId === comment._id ? (
+                <FlexBetween>
+                  <TextField
+                    fullWidth
+                    value={editedCommentText}
+                    onChange={(e) => setEditedCommentText(e.target.value)}
+                    sx={{ mr: 1 }}
+                  />
+                  <Button onClick={() => handleEditComment(comment._id)}>Save</Button>
+                  <Button onClick={() => setEditingCommentId(null)}>Cancel</Button>
+                </FlexBetween>
+              ) : (
+                <FlexBetween>
+                  <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
+                    <strong>{comment.firstName} {comment.lastName}:</strong> {comment.comment}
+                  </Typography>
+                  {(comment.userId === loggedInUserId || postUserId === loggedInUserId) && (
+                    <FlexBetween>
+                      {comment.userId === loggedInUserId && (
+                        <IconButton onClick={() => {
+                          setEditingCommentId(comment._id);
+                          setEditedCommentText(comment.comment);
+                        }}>
+                          <Edit />
+                        </IconButton>
+                      )}
+                      <IconButton onClick={() => {
+                        setCommentToDelete(comment);
+                        setDeleteDialogOpen(true);
+                      }}>
+                        <Delete />
+                      </IconButton>
+                    </FlexBetween>
+                  )}
+                </FlexBetween>
+              )}
             </Box>
           ))}
           <Divider />
@@ -142,6 +225,25 @@ const PostWidget = ({
           </FlexBetween>
         </Box>
       )}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this comment?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleDeleteComment} autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </WidgetWrapper>
   );
 };
