@@ -15,6 +15,7 @@ const ProfilePage = () => {
   const [error, setError] = useState(null);
   const { userId } = useParams();
   const token = useSelector((state) => state.token);
+  const posts = useSelector((state) => state.posts); // Add this line
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const navigate = useNavigate();
 
@@ -24,7 +25,6 @@ const ProfilePage = () => {
       console.log(`Fetching user data for ID: ${userId}`);
       console.log(`Using token: ${token.substring(0, 10)}...`);
       console.log(`Full URL: ${BACKEND_URL}/users/${userId}`);
-
       const response = await fetch(`${BACKEND_URL}/users/${userId}`, {
         method: "GET",
         headers: {
@@ -32,16 +32,13 @@ const ProfilePage = () => {
           "Content-Type": "application/json",
         },
       });
-
       console.log(`Response status: ${response.status}`);
       console.log(`Response OK: ${response.ok}`);
-
       if (!response.ok) {
         const errorBody = await response.text();
         console.log(`Error body: ${errorBody}`);
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
-
       const data = await response.json();
       console.log("Fetched user data:", data);
       setUser(data);
@@ -56,14 +53,16 @@ const ProfilePage = () => {
   useEffect(() => {
     console.log("ProfilePage useEffect triggered");
     getUser();
-
-    // Cleanup function
     return () => {
       console.log("ProfilePage useEffect cleanup");
     };
   }, [getUser]);
 
-  console.log("ProfilePage render", { loading, error, user });
+  useEffect(() => {
+    console.log("Current posts in Redux store:", posts);
+  }, [posts]);
+
+  console.log("ProfilePage render", { loading, error, user, postsCount: posts.length });
 
   if (loading) return <Typography>Loading...</Typography>;
   if (error) {
