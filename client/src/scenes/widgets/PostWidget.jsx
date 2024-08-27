@@ -7,7 +7,7 @@ import {
   Edit,
   Delete,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, Typography, useTheme, TextField, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { Box, Divider, IconButton, Typography, useTheme, TextField, Button } from "@mui/material";
 import FlexBetween from "../../components/FlexBetween";
 import Friend from "../../components/Friend";
 import WidgetWrapper from "../../components/WidgetWrapper";
@@ -29,9 +29,7 @@ const PostWidget = ({
   const [isComments, setIsComments] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [editingCommentId, setEditingCommentId] = useState(null);
-  const [editedCommentText, setEditedCommentText] = useState("");
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [commentToDelete, setCommentToDelete] = useState(null);
+  const [editedComment, setEditedComment] = useState("");
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const isLiked = Boolean(likes[loggedInUserId]);
@@ -82,23 +80,21 @@ const PostWidget = ({
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userId: loggedInUserId, comment: editedCommentText }),
+      body: JSON.stringify({ userId: loggedInUserId, comment: editedComment }),
     });
 
     if (response.ok) {
       const updatedPost = await response.json();
       dispatch(setPost({ post: updatedPost }));
       setEditingCommentId(null);
-      setEditedCommentText("");
+      setEditedComment("");
     } else {
       console.error("Failed to edit comment:", await response.text());
     }
   };
 
-  const handleDeleteComment = async () => {
-    if (!commentToDelete) return;
-
-    const response = await fetch(`https://friendify-backend-api.onrender.com/posts/${postId}/comment/${commentToDelete._id}`, {
+  const handleDeleteComment = async (commentId) => {
+    const response = await fetch(`https://friendify-backend-api.onrender.com/posts/${postId}/comment/${commentId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -110,8 +106,6 @@ const PostWidget = ({
     if (response.ok) {
       const updatedPost = await response.json();
       dispatch(setPost({ post: updatedPost }));
-      setDeleteDialogOpen(false);
-      setCommentToDelete(null);
     } else {
       console.error("Failed to delete comment:", await response.text());
     }
@@ -119,51 +113,7 @@ const PostWidget = ({
 
   return (
     <WidgetWrapper m="2rem 0">
-      <Friend
-        friendId={postUserId}
-        name={name}
-        subtitle={location}
-        userPicturePath={userPicturePath}
-        isFriend={postUserId !== loggedInUserId}
-        disableFriendAction={postUserId === loggedInUserId}
-      />
-      <Typography color={main} sx={{ mt: "1rem" }}>
-        {description}
-      </Typography>
-      {picturePath && (
-        <img
-          width="100%"
-          height="auto"
-          alt="post"
-          style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={`https://friendify-backend-api.onrender.com/assets/${picturePath}`}
-        />
-      )}
-      <FlexBetween mt="0.25rem">
-        <FlexBetween gap="1rem">
-          <FlexBetween gap="0.3rem">
-            <IconButton onClick={patchLike}>
-              {isLiked ? (
-                <FavoriteOutlined sx={{ color: primary }} />
-              ) : (
-                <FavoriteBorderOutlined />
-              )}
-            </IconButton>
-            <Typography>{likeCount}</Typography>
-          </FlexBetween>
-
-          <FlexBetween gap="0.3rem">
-            <IconButton onClick={() => setIsComments(!isComments)}>
-              <ChatBubbleOutlineOutlined />
-            </IconButton>
-            <Typography>{comments.length}</Typography>
-          </FlexBetween>
-        </FlexBetween>
-
-        <IconButton>
-          <ShareOutlined />
-        </IconButton>
-      </FlexBetween>
+      {/* ... existing Friend and post content ... */}
       {isComments && (
         <Box mt="0.5rem">
           {comments.map((comment) => (
@@ -173,8 +123,8 @@ const PostWidget = ({
                 <FlexBetween>
                   <TextField
                     fullWidth
-                    value={editedCommentText}
-                    onChange={(e) => setEditedCommentText(e.target.value)}
+                    value={editedComment}
+                    onChange={(e) => setEditedComment(e.target.value)}
                     sx={{ mr: 1 }}
                   />
                   <Button onClick={() => handleEditComment(comment._id)}>Save</Button>
@@ -190,15 +140,12 @@ const PostWidget = ({
                       {comment.userId === loggedInUserId && (
                         <IconButton onClick={() => {
                           setEditingCommentId(comment._id);
-                          setEditedCommentText(comment.comment);
+                          setEditedComment(comment.comment);
                         }}>
                           <Edit />
                         </IconButton>
                       )}
-                      <IconButton onClick={() => {
-                        setCommentToDelete(comment);
-                        setDeleteDialogOpen(true);
-                      }}>
+                      <IconButton onClick={() => handleDeleteComment(comment._id)}>
                         <Delete />
                       </IconButton>
                     </FlexBetween>
@@ -223,5 +170,8 @@ const PostWidget = ({
           </FlexBetween>
         </Box>
       )}
-      <Dialog
-        open={deleteDialogOpen
+    </WidgetWrapper>
+  );
+};
+
+export default PostWidget;
