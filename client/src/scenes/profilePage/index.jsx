@@ -1,4 +1,4 @@
-import { Box, useMediaQuery, Typography } from "@mui/material";
+import { Box, useMediaQuery, Typography, CircularProgress } from "@mui/material";
 import { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
@@ -24,16 +24,25 @@ const ProfilePage = () => {
   const getUser = useCallback(async () => {
     try {
       setLoading(true);
+      setError(null);
       console.log(`Fetching user data for ID: ${userId}`);
       console.log(`Using token: ${token.substring(0, 10)}...`);
       console.log(`Full URL: ${BACKEND_URL}/users/${userId}`);
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
       const response = await fetch(`${BACKEND_URL}/users/${userId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
+
       console.log(`Response status: ${response.status}`);
       console.log(`Response OK: ${response.ok}`);
       if (!response.ok) {
@@ -46,7 +55,7 @@ const ProfilePage = () => {
       setUser(data);
     } catch (error) {
       console.error("Failed to fetch user data:", error);
-      setError(error.message);
+      setError(error.name === 'AbortError' ? 'Request timed out' : error.message);
     } finally {
       setLoading(false);
     }
@@ -66,7 +75,7 @@ const ProfilePage = () => {
 
   console.log("ProfilePage render", { loading, error, user, postsCount: posts.length });
 
-  if (loading) return <Typography>Loading...</Typography>;
+  if (loading) return <CircularProgress />;
   if (error) {
     return (
       <Box>
