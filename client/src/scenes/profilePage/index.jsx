@@ -1,6 +1,6 @@
 import { Box, useMediaQuery, Typography } from "@mui/material";
 import { useEffect, useState, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../navbar";
 import FriendListWidget from "../widgets/FriendListWidget";
@@ -8,7 +8,6 @@ import MyPostWidget from "../widgets/MyPostWidget";
 import PostsWidget from "../widgets/PostsWidget";
 import UserWidget from "../widgets/UserWidget";
 import { BACKEND_URL } from "../../config";
-import { setPosts } from "../../state";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -16,8 +15,7 @@ const ProfilePage = () => {
   const [error, setError] = useState(null);
   const { userId } = useParams();
   const token = useSelector((state) => state.token);
-  const posts = useSelector((state) => state.posts);
-  const dispatch = useDispatch();
+  const posts = useSelector((state) => state.posts); // Add this line
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const navigate = useNavigate();
 
@@ -52,32 +50,13 @@ const ProfilePage = () => {
     }
   }, [userId, token]);
 
-  const getUserPosts = useCallback(async () => {
-    try {
-      console.log(`Fetching posts for user ${userId}`);
-      const response = await fetch(`${BACKEND_URL}/posts/${userId}/posts`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
-      const data = await response.json();
-      console.log(`Fetched posts for user ${userId}:`, data);
-      dispatch(setPosts({ posts: data }));
-    } catch (error) {
-      console.error(`Failed to fetch posts for user ${userId}:`, error);
-    }
-  }, [userId, token, dispatch]);
-
   useEffect(() => {
     console.log("ProfilePage useEffect triggered");
     getUser();
-    getUserPosts();
     return () => {
       console.log("ProfilePage useEffect cleanup");
     };
-  }, [getUser, getUserPosts]);
+  }, [getUser]);
 
   useEffect(() => {
     console.log("Current posts in Redux store:", posts);

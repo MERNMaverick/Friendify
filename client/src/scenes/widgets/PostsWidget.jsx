@@ -15,7 +15,6 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   const getPosts = async () => {
     try {
       setLoading(true);
-      console.log("Fetching all posts");
       const response = await fetch(`${BACKEND_URL}/posts`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
@@ -24,7 +23,6 @@ const PostsWidget = ({ userId, isProfile = false }) => {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
       const data = await response.json();
-      console.log("Fetched all posts:", data);
       dispatch(setPosts({ posts: data }));
     } catch (error) {
       console.error("Failed to fetch posts:", error);
@@ -37,19 +35,20 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   const getUserPosts = async () => {
     try {
       setLoading(true);
-      console.log(`Fetching posts for user ${userId}`);
-      const response = await fetch(`${BACKEND_URL}/posts/${userId}/posts`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch(
+        `${BACKEND_URL}/posts/${userId}/posts`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
       const data = await response.json();
-      console.log(`Fetched posts for user ${userId}:`, data);
       dispatch(setPosts({ posts: data }));
     } catch (error) {
-      console.error(`Failed to fetch posts for user ${userId}:`, error);
+      console.error("Failed to fetch user posts:", error);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -57,15 +56,12 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   };
 
   useEffect(() => {
-    console.log("PostsWidget useEffect triggered", { isProfile, userId });
     if (isProfile) {
       getUserPosts();
     } else {
       getPosts();
     }
   }, [userId, isProfile]);
-
-  console.log("PostsWidget render", { loading, error, postsCount: posts.length });
 
   if (loading) return <CircularProgress />;
   if (error) return <Typography color="error">Error: {error}</Typography>;
