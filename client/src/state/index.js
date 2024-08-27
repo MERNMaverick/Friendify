@@ -21,6 +21,7 @@ export const authSlice = createSlice({
     setLogout: (state) => {
       state.user = null;
       state.token = null;
+      state.posts = []; // Clear posts on logout
     },
     setFriends: (state, action) => {
       if (state.user) {
@@ -36,19 +37,27 @@ export const authSlice = createSlice({
       const updatedPosts = state.posts.map((post) => {
         if (post._id === action.payload.post._id) return action.payload.post;
         return post;
-      },);
+      });
       state.posts = updatedPosts;
     },
-        addComment: (state, action) => {
+    addComment: (state, action) => {
       const { postId, comment } = action.payload;
       const post = state.posts.find((post) => post._id === postId);
       if (post) {
         post.comments.push(comment);
       }
-    },    
+    },
   },
 });
 
-export const { addComment, setMode, setLogin, setLogout, setFriends, setPosts, setPost } =
-  authSlice.actions;
+export const {
+  setMode,
+  setLogin,
+  setLogout,
+  setFriends,
+  setPosts,
+  setPost,
+  addComment,
+} = authSlice.actions;
+
 export default authSlice.reducer;
