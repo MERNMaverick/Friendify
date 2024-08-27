@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { setFriends } from "../state";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
-import { BACKEND_URL } from "../config"; // Import the BACKEND_URL from config
 
 const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const dispatch = useDispatch();
@@ -23,37 +22,30 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const isFriend = friends.find((friend) => friend._id === friendId);
 
   const patchFriend = async () => {
-    try {
-      const response = await fetch(
-        `${BACKEND_URL}/users/${_id}/${friendId}`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    const response = await fetch(
+      `https://friendify-backend-api.onrender.com/users/${_id}/${friendId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       }
-      const data = await response.json();
-      dispatch(setFriends({ friends: data }));
-    } catch (error) {
-      console.error("Error updating friend status:", error);
-    }
-  };
-
-  const handleNavigate = () => {
-    console.log(`Navigating to user profile: ${friendId}`);
-    navigate(`/users/${friendId}`);
+    );
+    const data = await response.json();
+    dispatch(setFriends({ friends: data }));
   };
 
   return (
     <FlexBetween>
       <FlexBetween gap="1rem">
-        <UserImage image={`${BACKEND_URL}/assets/${userPicturePath}`} size="55px" />
-        <Box onClick={handleNavigate}>
+        <UserImage image={`https://friendify-backend-api.onrender.com/assets/${userPicturePath}`} size="55px" />
+        <Box
+          onClick={() => {
+            navigate(`/users/${friendId}`);
+            navigate(0);
+          }}
+        >
           <Typography
             color={main}
             variant="h5"
@@ -74,7 +66,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
       </FlexBetween>
       {friendId !== _id && (
         <IconButton
-          onClick={patchFriend}
+          onClick={() => patchFriend()}
           sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
         >
           {isFriend ? (
