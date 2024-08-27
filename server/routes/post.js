@@ -1,5 +1,5 @@
 import express from "express";
-import { addComment,editComment, deleteComment, getFeedPosts, getUserPosts, likePost } from "../controllers/post.js";
+import { addComment, getFeedPosts, getUserPosts, likePost } from "../controllers/post.js";
 import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
