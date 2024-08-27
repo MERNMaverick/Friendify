@@ -111,10 +111,10 @@ export const likePost = async (req, res) => {
 /* DELETE AND EDIT COMMENT */ 
 export const editComment = async (req, res) => {
   try {
-    const { id, commentId } = req.params;
+    const { postId, commentId } = req.params;
     const { userId, comment } = req.body;
 
-    const post = await Post.findById(id);
+    const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
@@ -139,10 +139,10 @@ export const editComment = async (req, res) => {
 
 export const deleteComment = async (req, res) => {
   try {
-    const { id, commentId } = req.params;
+    const { postId, commentId } = req.params;
     const { userId } = req.body;
 
-    const post = await Post.findById(id);
+    const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
