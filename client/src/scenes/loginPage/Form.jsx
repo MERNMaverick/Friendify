@@ -32,6 +32,24 @@ const Form = () => {
   };
 
   const login = async (values, onSubmitProps) => {
+
+    const loggedInResponse = await fetch(
+      "https://friendify-backend-api.onrender.com/auth/login",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      }
+    );
+    const loggedIn = await loggedInResponse.json();
+    onSubmitProps.resetForm();
+    if (loggedIn) {
+      dispatch(
+        setLogin({
+          user: loggedIn.user,
+          token: loggedIn.token,
+        })
+
     try {
       console.log("Attempting login with values:", values);
       const loggedInResponse = await fetch(
