@@ -11,11 +11,9 @@ import { fileURLToPath } from "url";
 import userRoutes from "./routes/users.js";
 import authRoutes from "./routes/auth.js";
 import postRoutes from "./routes/post.js";
-import searchRoutes from "./routes/search.js";
 import { register } from "./controllers/auth.js";
 import { createPost } from "./controllers/post.js";
 import { verifyToken } from "./middleware/auth.js";
-
 
 // Configure CORS
 const corsOptions = {
@@ -59,7 +57,6 @@ app.post("/posts", verifyToken, upload.single("picture"), createPost);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
-app.use("/search", searchRoutes);
 
 // ENVIRONMENT VARIABLES
 const port = process.env.PORT || 4000;

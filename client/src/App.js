@@ -2,7 +2,6 @@ import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import HomePage from "./scenes/homePage";
 import LoginPage from "./scenes/loginPage";
 import ProfilePage from "./scenes/profilePage";
-import SearchResults from "./scenes/SearchResults.jsx"; // Add this import
 import { useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -33,10 +32,6 @@ function App() {
             <Route
               path="/users/:userId"
               element={isAuth ? <ProfilePage /> : <Navigate to="/" />}
-            />
-            <Route
-              path="/search-results"
-              element={isAuth ? <SearchResults /> : <Navigate to="/" />}
             />
             {/* Catch-all route */}
             <Route path="*" element={<Navigate to="/" />} />
