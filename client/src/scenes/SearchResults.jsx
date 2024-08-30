@@ -1,8 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Box, Typography, useTheme } from "@mui/material";
-import Friend from "../../components/Friend";
-import WidgetWrapper from "../../components/WidgetWrapper";
+import Friend from "../components/Friend";
+import WidgetWrapper from "../components/WidgetWrapper";
 import PostWidget from "../widgets/PostWidget";
 
 const SearchResults = () => {
