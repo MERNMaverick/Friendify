@@ -55,7 +55,6 @@ export const getUserPosts = async (req, res) => {
   }
 };
 
-
 /* ADD COMMENT */
 export const addComment = async (req, res) => {
   try {
