@@ -125,6 +125,9 @@ export const editComment = async (req, res) => {
     }
 
     commentToEdit.comment = comment;
+    commentToEdit.isEdited = true;
+    commentToEdit.createdAt = new Date(); // Update the timestamp
+
     await post.save();
 
     res.status(200).json(post);
