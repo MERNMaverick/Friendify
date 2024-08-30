@@ -41,74 +41,93 @@ const PostWidget = ({
   const primary = palette.primary.main;
 
   const patchLike = async () => {
-    const response = await fetch(`${BACKEND_URL}/posts/${postId}/like`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId: loggedInUserId }),
-    });
-    const updatedPost = await response.json();
-    dispatch(setPost({ post: updatedPost }));
+    try {
+      const response = await fetch(`${BACKEND_URL}/posts/${postId}/like`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: loggedInUserId }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const updatedPost = await response.json();
+      dispatch(setPost({ post: updatedPost }));
+    } catch (error) {
+      console.error("Failed to update like:", error);
+    }
   };
 
   const handleAddComment = async () => {
     if (newComment.trim() === "") return;
 
-    const response = await fetch(`${BACKEND_URL}/posts/${postId}/comment`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId: loggedInUserId, comment: newComment }),
-    });
+    try {
+      const response = await fetch(`${BACKEND_URL}/posts/${postId}/comment`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: loggedInUserId, comment: newComment }),
+      });
 
-    if (response.ok) {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const updatedPost = await response.json();
       dispatch(setPost({ post: updatedPost }));
       setNewComment("");
-    } else {
-      console.error("Failed to add comment:", await response.text());
+    } catch (error) {
+      console.error("Failed to add comment:", error);
     }
   };
 
   const handleEditComment = async (commentId) => {
-    const response = await fetch(`${BACKEND_URL}/posts/${postId}/comment/${commentId}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId: loggedInUserId, comment: editedComment }),
-    });
+    try {
+      const response = await fetch(`${BACKEND_URL}/posts/${postId}/comment/${commentId}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: loggedInUserId, comment: editedComment }),
+      });
 
-    if (response.ok) {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const updatedPost = await response.json();
       dispatch(setPost({ post: updatedPost }));
       setEditingCommentId(null);
       setEditedComment("");
-    } else {
-      console.error("Failed to edit comment:", await response.text());
+    } catch (error) {
+      console.error("Failed to edit comment:", error);
     }
   };
 
   const handleDeleteComment = async (commentId) => {
-    const response = await fetch(`${BACKEND_URL}/posts/${postId}/comment/${commentId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId: loggedInUserId }),
-    });
+    try {
+      const response = await fetch(`${BACKEND_URL}/posts/${postId}/comment/${commentId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: loggedInUserId }),
+      });
 
-    if (response.ok) {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const updatedPost = await response.json();
       dispatch(setPost({ post: updatedPost }));
-    } else {
-      console.error("Failed to delete comment:", await response.text());
+    } catch (error) {
+      console.error("Failed to delete comment:", error);
     }
   };
 
