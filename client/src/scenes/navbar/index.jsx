@@ -21,15 +21,17 @@ import {
   Close,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { setMode, setLogout } from "../../state";
+import { setMode, setLogout, setSearchResults } from "../../state";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "../../components/FlexBetween";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
   const theme = useTheme();
@@ -40,6 +42,28 @@ const Navbar = () => {
   const alt = theme.palette.background.alt;
 
   const fullName = user ? `${user.firstName} ${user.lastName}` : "";
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (searchQuery.trim() === "") return;
+
+    try {
+      const response = await fetch(`https://friendify-backend-api.onrender.com/search?q=${encodeURIComponent(searchQuery)}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const searchResults = await response.json();
+      dispatch(setSearchResults({ results: searchResults }));
+      navigate("/search-results");
+    } catch (error) {
+      console.error("Search failed:", error);
+    }
+  };
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
@@ -65,8 +89,13 @@ const Navbar = () => {
             gap="3rem"
             padding="0.1rem 1.5rem"
           >
-            <InputBase placeholder="Search..." />
-            <IconButton>
+            <InputBase 
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)}
+            />
+            <IconButton onClick={handleSearch}>
               <Search />
             </IconButton>
           </FlexBetween>
