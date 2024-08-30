@@ -5,6 +5,7 @@ const initialState = {
   user: null,
   token: null,
   posts: [],
+  searchResults: { users: [], posts: [] }, 
 };
 
 export const authSlice = createSlice({
@@ -22,6 +23,7 @@ export const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.posts = [];
+      state.searchResults = { users: [], posts: [] }; 
     },
     setFriends: (state, action) => {
       if (state.user) {
@@ -64,6 +66,9 @@ export const authSlice = createSlice({
         post.comments = post.comments.filter((comment) => comment._id !== commentId);
       }
     },
+    setSearchResults: (state, action) => {
+      state.searchResults = action.payload;
+    },
   },
 });
 
@@ -77,6 +82,7 @@ export const {
   addComment,
   editComment,
   deleteComment,
+  setSearchResults, 
 } = authSlice.actions;
 
 export default authSlice.reducer;
