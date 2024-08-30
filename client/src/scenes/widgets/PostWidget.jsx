@@ -7,13 +7,28 @@ import {
   Edit,
   Delete,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, Typography, useTheme, TextField, Button } from "@mui/material";
+import {
+  Box,
+  Divider,
+  IconButton,
+  Typography,
+  useTheme,
+  TextField,
+  Button,
+  Avatar,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import FlexBetween from "../../components/FlexBetween";
 import Friend from "../../components/Friend";
 import WidgetWrapper from "../../components/WidgetWrapper";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "../../state";
 import { BACKEND_URL } from "../../config";
+import { format } from 'date-fns';
 
 const PostWidget = ({
   postId,
@@ -30,6 +45,8 @@ const PostWidget = ({
   const [newComment, setNewComment] = useState("");
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedComment, setEditedComment] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
@@ -109,9 +126,11 @@ const PostWidget = ({
     }
   };
 
-  const handleDeleteComment = async (commentId) => {
+  const handleDeleteComment = async () => {
+    if (!commentToDelete) return;
+
     try {
-      const response = await fetch(`${BACKEND_URL}/posts/${postId}/comment/${commentId}`, {
+      const response = await fetch(`${BACKEND_URL}/posts/${postId}/comment/${commentToDelete._id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -126,6 +145,8 @@ const PostWidget = ({
 
       const updatedPost = await response.json();
       dispatch(setPost({ post: updatedPost }));
+      setDeleteDialogOpen(false);
+      setCommentToDelete(null);
     } catch (error) {
       console.error("Failed to delete comment:", error);
     }
@@ -194,9 +215,19 @@ const PostWidget = ({
                 </FlexBetween>
               ) : (
                 <FlexBetween>
-                  <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                    <strong>{comment.firstName} {comment.lastName}:</strong> {comment.comment}
-                  </Typography>
+                  <Box display="flex" alignItems="center">
+                    <Avatar src={`${BACKEND_URL}/assets/${comment.userPicturePath}`} sx={{ width: 32, height: 32, mr: 1 }} />
+                    <Box>
+                      <Typography sx={{ color: main, fontWeight: "bold" }}>
+                        {comment.firstName} {comment.lastName}
+                      </Typography>
+                      <Typography sx={{ color: main }}>{comment.comment}</Typography>
+                      <Typography variant="caption" sx={{ color: palette.neutral.medium }}>
+                        {format(new Date(comment.createdAt), 'MMM d, yyyy HH:mm')}
+                        {comment.isEdited && " (edited)"}
+                      </Typography>
+                    </Box>
+                  </Box>
                   {(comment.userId === loggedInUserId || postUserId === loggedInUserId) && (
                     <FlexBetween>
                       {comment.userId === loggedInUserId && (
@@ -207,7 +238,10 @@ const PostWidget = ({
                           <Edit />
                         </IconButton>
                       )}
-                      <IconButton onClick={() => handleDeleteComment(comment._id)}>
+                      <IconButton onClick={() => {
+                        setCommentToDelete(comment);
+                        setDeleteDialogOpen(true);
+                      }}>
                         <Delete />
                       </IconButton>
                     </FlexBetween>
@@ -232,6 +266,27 @@ const PostWidget = ({
           </FlexBetween>
         </Box>
       )}
+
+      {/* Confirmation Dialog for Comment Deletion */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Comment Deletion"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this comment? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleDeleteComment} autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </WidgetWrapper>
   );
 };
